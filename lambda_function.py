@@ -648,6 +648,37 @@ class DisplayVariableIntentHandler(AbstractRequestHandler):
             SimpleCard(SKILL_NAME, output))
         return handler_input.response_builder.response
 
+
+class DecreaseIndentIntentHandler(AbstractRequestHandler):
+    """intent for decreasing intent """
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("DecreaseIndentIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In DecreaseIndentIntentHandler")
+
+        session_attributes = handler_input.attributes_manager.session_attributes
+        logger.info('SESSION ATTRIBUTES: ' + str(session_attributes))
+        string_value = None
+        variable_name = None
+        output = "going out of current block"
+        output_speak = None
+        output_display = None
+        update_indent(handler_input, -1)
+        output_display = "ok exiting current block"
+        output_speak = 'ok exiting current block <voice name="Kendra"></voice>'
+        output = session_attributes['current_script_code']
+
+        # if output_display is None or output_speak is None:
+        #     output_display = output
+        #     output_speak = output
+
+        handler_input.response_builder.speak(output).set_card(
+            SimpleCard(SKILL_NAME, output))
+        return handler_input.response_builder.response
 # Make sure any new handlers or interceptors you've
 # defined are included below. The order matters - they're processed top to bottom.
 
@@ -665,6 +696,7 @@ sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
 sb.add_request_handler(PrintStatementIntentHandler())
 sb.add_request_handler(DisplayVariableIntentHandler())
+sb.add_request_handler(DecreaseIndentIntentHandler())
 # make sure IntentReflectorHandler is last so it doesn't override your custom intent handlers
 # sb.add_request_handler(IntentReflectorHandler())
 
